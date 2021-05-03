@@ -1,6 +1,7 @@
 import './style/main.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+let objects
 /**
  * GUI Controls
  */
@@ -19,13 +20,25 @@ const scene = new THREE.Scene()
 /**
  * Object
  */
-const geometry = new THREE.IcosahedronGeometry(20, 1)
-const material = new THREE.MeshNormalMaterial()
+objects = []
+
+const material = new THREE.MeshBasicMaterial()
+let geometry = new THREE.BoxBufferGeometry()
+
+for (let i = 0; i < 100; i++) {
+  const mesh = new THREE.Mesh(geometry, material)
+  mesh.position.z = Math.random() * 500 - 250
+  mesh.rotation.z = Math.random() * 500 - 250
+  mesh.scale.x = mesh.scale.y = mesh.scale.z = 10
+
+  objects.push(mesh)
+
+  scene.add(mesh)
+}
+
 // Material Props.
 material.wireframe = true
 // Create Mesh & Add To Scene
-const mesh = new THREE.Mesh(geometry, material)
-scene.add(mesh)
 
 /**
  * Sizes
@@ -59,15 +72,15 @@ const camera = new THREE.PerspectiveCamera(
   0.001,
   5000
 )
-camera.position.x = 1
-camera.position.y = 1
+camera.position.x = 0
+camera.position.y = 0
 camera.position.z = 50
 scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-controls.autoRotate = true
+//controls.autoRotate = true
 // controls.enableZoom = false
 controls.enablePan = false
 controls.dampingFactor = 0.05
@@ -96,8 +109,11 @@ const tick = () => {
 
   //mesh.rotation.y += 0.01 * Math.sin(1)
   //mesh.rotation.y += 0.01 * Math.sin(1)
-  mesh.rotation.z += 0.01 * Math.sin(1)
-
+  //mesh.rotation.z += 0.01 * Math.sin(1)
+  for (let i = 0, il = objects.length; i < il; i++) {
+    objects[i].rotation.z += 0.01
+    objects[i].scale.z += 0.1
+  }
   // Update controls
   controls.update()
   // Render
